@@ -250,18 +250,17 @@ namespace WinFormsApp1
                     continue;
                 }
 
-                logger.AppendLine($"\n--- [الخطوة 1] تعيين أول عمود غير صفري: العمود {col + 1} ---");
+                logger.AppendLine($"\n---C{col + 1} ---");
 
-                //   نجعل اول عنصر في العمود قيمته لا تساوي صفر row operation(تبديل صف مكان صف) 
+                 
                 if (nonZeroRow != currentPivotRow)
                 {
                     SwapRows(matrix, currentPivotRow, nonZeroRow);
-                    logger.AppendLine($"[عملیات الصف] تبديل الصف {currentPivotRow + 1} مع الصف {nonZeroRow + 1} تجنباً للصفر");
+                    logger.AppendLine($"R{currentPivotRow + 1}  <==> R{nonZeroRow + 1} ");
                     AppendMatrix(logger, matrix);
                 }
 
-                // 3) نجعل أول عنصر في العمود قيمته تساوي 1 ويسمى (Leading 1)
-                // وذلك بضرب الصف في ثابت غير صفري (1 / pivot)
+                
                 double pivotVal = matrix[currentPivotRow, col];
                 if (Math.Abs(pivotVal - 1.0) > 1e-9)
                 {
@@ -270,7 +269,7 @@ namespace WinFormsApp1
                     {
                         matrix[currentPivotRow, j] *= factor;
                     }
-                    logger.AppendLine($"\n[الخطوة 3 - Row Operation] ضرب الصف {currentPivotRow + 1} في الثابت ({Math.Round(factor, 3)}) للحصول على Leading 1:");
+                    logger.AppendLine($"\n  ({Math.Round(factor, 3)}).R{currentPivotRow + 1}==>R{currentPivotRow + 1} ");
                     AppendMatrix(logger, matrix);
                 }
                 else
@@ -278,8 +277,7 @@ namespace WinFormsApp1
                     logger.AppendLine($"\nالعنصر القائد (Leading 1) جاهز في الصف {currentPivotRow + 1}، العمود {col + 1}.");
                 }
 
-                // 4) نجعل العناصر أسفل الـ Leading 1 تساوي صفر
-                // وذلك بضرب الصف القائد في ثابت وجمعه على الصف المراد تصفيره
+                
                 bool subRowsEliminated = false;
                 for (int r = currentPivotRow + 1; r < rows; r++)
                 {
@@ -290,7 +288,7 @@ namespace WinFormsApp1
                         {
                             matrix[r, j] -= multiplier * matrix[currentPivotRow, j];
                         }
-                        logger.AppendLine($"\n[الخطوة 4 - Row Operation] ضرب الصف {currentPivotRow + 1} في ({Math.Round(-multiplier, 3)}) وجمعه على الصف {r + 1} لتصفير أسفل Leading 1");
+                        logger.AppendLine($"\n  ({Math.Round(-multiplier, 3)}).R{currentPivotRow + 1}  +  R{r + 1} ==> R{r + 1}");
                         subRowsEliminated = true;
                     }
                 }
@@ -303,7 +301,7 @@ namespace WinFormsApp1
                 currentPivotRow++;
             }
 
-            logger.AppendLine("\n--- تم الوصول إلى صيغة الدرج الصفية (Row Echelon Form) ---");
+            logger.AppendLine("\n--- S(Row Echelon Form) ---");
 
             // المرحلة الثانية: Gauss-Jordan Elimination (تصفير ما فوق الـ Leading 1)
             logger.AppendLine("\n==============================================");
@@ -335,13 +333,13 @@ namespace WinFormsApp1
                         {
                             matrix[k, j] -= multiplier * matrix[r, j];
                         }
-                        logger.AppendLine($"\n[Row Operation] ضرب الصف {r + 1} في ({Math.Round(-multiplier, 3)}) وجمعه على الصف {k + 1} لتصفير أعلا الـ Leading 1:");
+                        logger.AppendLine($"\n ({Math.Round(-multiplier, 3)}).R{r + 1} +  R{k + 1} ==> R{k + 1}");
                         AppendMatrix(logger, matrix);
                     }
                 }
             }
 
-            logger.AppendLine("\n--- تم الوصول إلى صورة الدرج الصفية المختزلة (Reduced Row Echelon Form) ---");
+            logger.AppendLine("\n---  (Reduced Row Echelon Form) ---");
 
             // تحليل الحل النهائي
             logger.AppendLine("\n================================================");
